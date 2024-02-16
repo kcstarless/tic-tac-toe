@@ -4,19 +4,22 @@ class Game
   PLAYER_1 = "X"
   PLAYER_2 = "O"
 
-  @@board = { 1 => nil, 2 => nil, 3 => nil,
-              4 => nil, 5 => nil, 6 => nil,
-              7 => nil, 8 => nil, 9 => nil }
-
-
   def initialize
+    @board = { 1 => nil, 2 => nil, 3 => nil,
+    4 => nil, 5 => nil, 6 => nil,
+    7 => nil, 8 => nil, 9 => nil }
+
+    @winning = [ [1, 2, 3], [4, 5, 6], [7, 8, 9],
+                 [1, 4, 7], [2, 5, 8], [3, 6, 9],
+                 [1, 5, 9], [3, 5, 9] ]
+
     start
   end
 
   def display_board
     puts "-------"
     count = 0
-    @@board.select do |key, value|
+    @board.select do |key, value|
       if value == nil
         print "#{key}  "
       else
@@ -35,14 +38,14 @@ class Game
     puts "-------"
     puts "Player 1 is (X) and Player 2 is (O)"
     display_board
-    Rounds.new
   end
 end
 
-class Rounds < Game
+class PlayGame
   attr_accessor :player_choice, :switch_turns
 
   def initialize
+    @new_game = Game.new
     @player_choice = nil
     @switch_turns = false
     start_round
@@ -58,10 +61,12 @@ class Rounds < Game
         puts "Player 1 pick a number: "
         self.player_choice = check_choice(gets.chomp)
         update_round(PLAYER_1, player_choice)
+        check_winner(PLAYER_1)
       else
         puts "Player 2 pick a number: "
         self.player_choice = check_choice(gets.chomp)
         update_round(PLAYER_2, player_choice)
+        check_winner(PLAYER_2)
       end
       i += 1
     end
@@ -86,6 +91,15 @@ class Rounds < Game
     end
   end
 
+  def check_winner(player)
+    player_combo = @@board.select {|key, value| value == player}.keys
+
+    @@winning.select do |win_combo|
+      return player_combo.sort.join("").include?(win_combo.join(""))
+    end
+  end
+
 end
 
-new_game = Game.new()
+new_game = PlayGame.new()
+new_game
