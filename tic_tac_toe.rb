@@ -4,11 +4,9 @@ class Game
   PLAYER_1 = "X"
   PLAYER_2 = "O"
 
-  @@board_array = [ [1, 2, 3], [4, 5, 6], [7, 8, 9] ]
-  @@active_array = Array.new(10)
-  @@board = { 1 => nil, 2 => nil, 3 => nil, 4 => nil, 5 => nil,
-              6 => nil, 7 => nil, 8 => nil, 9 => nil }
-  attr_accessor :board_array
+  @@board = { 1 => nil, 2 => nil, 3 => nil,
+              4 => nil, 5 => nil, 6 => nil,
+              7 => nil, 8 => nil, 9 => nil }
 
 
   def initialize
@@ -17,7 +15,6 @@ class Game
 
   def display_board
     puts "-------"
-    # @@board_array.map { |x| puts x.join('  ') }
     count = 0
     @@board.select do |key, value|
       if value == nil
@@ -59,12 +56,11 @@ class Rounds < Game
       end
       if switch_turns == false
         puts "Player 1 pick a number: "
-        self.player_choice = gets.chomp
-        # check_choice(player_choice)
+        self.player_choice = check_choice(gets.chomp)
         update_round(PLAYER_1, player_choice)
       else
         puts "Player 2 pick a number: "
-        self.player_choice = gets.chomp
+        self.player_choice = check_choice(gets.chomp)
         update_round(PLAYER_2, player_choice)
       end
       i += 1
@@ -72,13 +68,6 @@ class Rounds < Game
   end
 
   def update_round(player, player_choice)
-    # @@board.each_with_index do |x|
-    #   x.each do |y|
-    #     if y == player_choice.to_i
-    #       x[x.index(y)] = player
-    #     end
-    #   end
-    # end
     @@board.select do |key, value|
       if key == player_choice.to_i && !value
         @@board[key] = player
@@ -88,8 +77,13 @@ class Rounds < Game
     display_board
   end
 
-  def check_choice
-
+  def check_choice(choice)
+    if @@board.has_key?(choice.to_i) && @@board.values_at(choice.to_i) == [nil]
+      return choice
+    else
+      puts "Invalid number or Position taken:  "
+      check_choice(gets.chomp)
+    end
   end
 
 end
